@@ -1,0 +1,650 @@
+---
+include:
+  - docassemble.AssemblyLine:assembly_line.yml
+---
+metadata:
+  title: >-
+    Rfaaffidavitonbehalfofminor
+  short title: >-
+    Rfaaffidavitonbehalfofmin
+  description: |-
+    AFFIDAVIT - Ask the court for a RFA on behalf of a child
+  tags: []
+  authors:
+    - VTCourtForms by Legal Services Vermont
+  allowed_courts: []
+  typical_role: "plaintiff"
+  al_weaver_version: "1.10.3"
+  generated_on: "2023-12-14"
+---
+code: |
+  # This controls the default country and list of states in address field questions
+  AL_DEFAULT_COUNTRY = "US"
+---
+code: |
+  # This controls the default state in address field questions
+  AL_DEFAULT_STATE = "VT"
+---
+code: |
+  github_repo_name =  'docassemble-Rfaaffidavitonbehalfofminor'
+---
+code: |
+  interview_short_title = "AFFIDAVIT - Ask the court for a RFA on behalf of a child"
+---
+code: |
+  al_form_type = "starts_case" 
+---
+objects:
+  - users: ALPeopleList.using(ask_number=True,target_number=1)
+---
+sections:
+  - review_rfaaffidavitonbehalfofminor: Review your answers
+---
+#################### Interview order #####################
+comment: |
+  Controls order and branching logic for questions specific to this form
+id: interview_order_rfaaffidavitonbehalfofminor
+code: |
+  # Set the allowed courts for this interview
+  allowed_courts = []
+  nav.set_section("review_rfaaffidavitonbehalfofminor")
+  user_role = "plaintiff"
+  user_ask_role = "plaintiff"
+  users.gather()
+  set_parts(subtitle=str(users))
+  other_parties1_weapon
+  weapon1
+  set_progress(11)
+  used_weapon
+  recent_incident_date
+  recent_incident_most_serious
+  set_progress(22)
+  serious_incident_date
+  other_incident_description
+  danger_more_abuse
+  set_progress(33)
+  other_parties1_military
+  affidavit_signature_date
+  trial_court.address.address
+  set_progress(44)
+  docket_number
+  children.gather()
+  children[0].birthdate
+  set_progress(55)
+  other_parties.gather()
+  other_parties[0].birthdate
+  other_parties[0].address.address
+  set_progress(66)
+  users[0].birthdate
+  signature_date
+  interview_order_rfaaffidavitonbehalfofminor = True
+---
+###################### Main order ######################
+comment: |
+  This block includes the logic for standalone interviews.
+  Delete mandatory: True to include in another interview
+mandatory: True
+code: |
+  al_intro_screen
+  rfaaffidavitonbehalfofminor_intro
+  interview_order_rfaaffidavitonbehalfofminor
+  signature_date
+  # Store anonymous data for analytics / statistics
+  store_variables_snapshot(
+      persistent=True,
+      data={
+          "zip": showifdef("users[0].address.zip"),
+          "reached_interview_end": True,
+      },
+  )
+  rfaaffidavitonbehalfofminor_download
+---
+comment: |
+  This question is used to introduce your interview. Please customize
+id: Rfaaffidavitonbehalfofminor
+continue button field: rfaaffidavitonbehalfofminor_intro
+question: |
+  Rfaaffidavitonbehalfofminor
+subquestion: |
+  Affidavit for a RFA on behalf of a child
+---
+id: Screen one
+question: |
+  Screen one
+fields:
+  - "Other parties1 weapon": other_parties1_weapon
+    datatype: yesno
+  - "Other parties1 weapon dk": other_parties1_weapon_DK
+    datatype: yesno
+---
+id: Screen two
+question: |
+  Screen two
+fields:
+  - "Weapon1": weapon1
+    maxlength: 76
+    required: False
+  - "Weapon1 location": weapon1_location
+    maxlength: 76
+    required: False
+  - "Weapon2": weapon2
+    maxlength: 76
+    required: False
+  - "Weapon2 location": weapon2_location
+    maxlength: 76
+    required: False
+  - "Weapon3": weapon3
+    maxlength: 76
+    required: False
+  - "Weapon3 location": weapon3_location
+    maxlength: 76
+    required: False
+  - "Weapon4": weapon4
+    maxlength: 76
+    required: False
+  - "Weapon4 location": weapon4_location
+    required: False
+    maxlength: 76
+  - "Weapon5": weapon5
+    required: False
+    maxlength: 76
+  - "Weapon5 location": weapon5_location
+    required: False
+    maxlength: 76
+  - "Weapon6 location": weapon6_location
+    required: False
+    maxlength: 76
+  - "Weapon6": weapon6
+    required: False
+    maxlength: 76
+  - "Weapon7": weapon7
+    required: False
+    maxlength: 76
+  - "Weapon7 location": weapon7_location
+    required: False
+    maxlength: 76
+  - "Weapon8": weapon8
+    required: False
+    maxlength: 76
+  - "Weapon8 location": weapon8_location
+    required: False
+    maxlength: 76
+---
+id: Screen three
+question: |
+  Screen three
+fields:
+  - "Def. used weapon?": used_weapon
+    datatype: yesno
+  - "Used weapon how?": used_weapon_how
+    input type: area
+    maxlength: 510
+---
+id: Screen four
+question: |
+  Screen four
+fields:
+  - "Date of recent incident": recent_incident_date
+    datatype: date
+  - "Recent incident time": recent_incident_time
+    maxlength: 13
+  - "Recent incident town": recent_incident_town
+    maxlength: 27
+  - "Recent incident state": recent_incident_state
+    maxlength: 15
+  - "Recent incident description": recent_incident_description
+    input type: area
+    maxlength: 534
+---
+id: Screen five
+question: |
+  Screen five
+fields:
+  - "Recent incident most serious": recent_incident_most_serious
+    datatype: yesno
+---
+id: Screen six
+question: |
+  Screen six
+fields:
+  - "Date of serious incident": serious_incident_date
+    datatype: date
+  - "Serious incident time": serious_incident_time
+    maxlength: 13
+  - "Serious incident town": serious_incident_town
+    maxlength: 27
+  - "Serious incident state": serious_incident_state
+    maxlength: 11
+  - "Serious incident description": serious_incident_description
+    input type: area
+    maxlength: 516
+---
+id: Screen seven
+question: |
+  Screen seven
+fields:
+  - "Other incident description": other_incident_description
+    input type: area
+    maxlength: 2175
+---
+id: Screen eight
+question: |
+  Screen eight
+fields:
+  - "Danger more abuse to child1": danger_more_abuse
+    datatype: yesno
+  - "Danger more abuse other kids": danger_more_abuse_others
+    datatype: yesno
+  - "Danger more abuse why": danger_more_abuse_why
+    input type: area
+    maxlength: 890
+---
+id: Screen nine
+question: |
+  Screen nine
+fields:
+  - "Other parties1 in military?": other_parties1_military
+    datatype: yesno
+---
+id: Screen ten
+question: |
+  Screen ten
+fields:
+  - "Date of signature": affidavit_signature_date
+    datatype: date
+  - "Printed name under your signature": printed_signature
+    maxlength: 34
+---
+id: preview rfaaffidavitonbehalfofminor
+question: |
+  Preview your form before you sign it
+subquestion: |
+  Here is a preview of the form you will sign on the next page.   
+  
+  ${ al_court_bundle.as_pdf(key='preview') }
+
+  Click the image to open it in a new tab. Click the "Edit answers" button
+  to edit your answers.
+
+  ${ action_button_html(url_action('review_rfaaffidavitonbehalfofminor'), label='Edit answers', color='info') }
+  
+  Remember to come back to this window to continue and sign your form.
+continue button field: rfaaffidavitonbehalfofminor_preview_question    
+---
+code: |
+  signature_fields = ['users[0].signature']
+---
+code: |
+  # This is a placeholder for the addresses that will be searched
+  # for matching address to court. Edit if court venue is based on 
+  # a different address than the user's
+  [user.address.address for user in users.complete_elements()]
+  addresses_to_search = [user.address for user in users.complete_elements()]
+---
+id: rfaaffidavitonbehalfofminor review screen
+event: review_rfaaffidavitonbehalfofminor
+question: |
+  Review your answers
+review:
+  - Edit: trial_court
+    button: |
+      **Trial court**
+  
+      % if defined("trial_court.address.county"):
+      * address: ${ trial_court.address.block() }
+      % endif
+  - Edit: docket_number
+    button: |
+      **Docket number**:
+      ${ docket_number }
+  - Edit: children.revisit
+    button: |
+      **Children**
+
+      % for item in children:
+        * ${ item }
+      % endfor
+  - Edit: other_parties.revisit
+    button: |
+      **Other parties**
+
+      % for item in other_parties:
+        * ${ item }
+      % endfor
+  - Edit: users.revisit
+    button: |
+      **Users**
+
+      % for item in users:
+        * ${ item }
+      % endfor
+  - Edit: affidavit_signature_date
+    button: |
+      **Date of signature**:
+      ${ affidavit_signature_date }
+  - Edit: printed_signature
+    button: |
+      **Printed name under your signature**:
+      ${ printed_signature }
+  - Edit: other_parties1_weapon
+    button: |
+      **Other parties1 weapon**:
+      ${ word(yesno(other_parties1_weapon)) }
+  - Edit: other_parties1_weapon_DK
+    button: |
+      **Other parties1 weapon dk**:
+      ${ word(yesno(other_parties1_weapon_DK)) }
+  - Edit: recent_incident_date
+    button: |
+      **Date of recent incident**:
+      ${ recent_incident_date }
+  - Edit: recent_incident_time
+    button: |
+      **Recent incident time**:
+      ${ recent_incident_time }
+  - Edit: recent_incident_town
+    button: |
+      **Recent incident town**:
+      ${ recent_incident_town }
+  - Edit: recent_incident_state
+    button: |
+      **Recent incident state**:
+      ${ recent_incident_state }
+  - Edit: recent_incident_description
+    button: |
+      **Recent incident description**:
+      > ${ single_paragraph(recent_incident_description) }
+  - Edit: recent_incident_most_serious
+    button: |
+      **Recent incident most serious**:
+      ${ word(yesno(recent_incident_most_serious)) }
+  - Edit: serious_incident_date
+    button: |
+      **Date of serious incident**:
+      ${ serious_incident_date }
+  - Edit: serious_incident_time
+    button: |
+      **Serious incident time**:
+      ${ serious_incident_time }
+  - Edit: serious_incident_town
+    button: |
+      **Serious incident town**:
+      ${ serious_incident_town }
+  - Edit: serious_incident_state
+    button: |
+      **Serious incident state**:
+      ${ serious_incident_state }
+  - Edit: serious_incident_description
+    button: |
+      **Serious incident description**:
+      > ${ single_paragraph(serious_incident_description) }
+  - Edit: other_incident_description
+    button: |
+      **Other incident description**:
+      > ${ single_paragraph(other_incident_description) }
+  - Edit: weapon1
+    button: |
+      **Weapon1**:
+      ${ weapon1 }
+  - Edit: weapon1_location
+    button: |
+      **Weapon1 location**:
+      ${ weapon1_location }
+  - Edit: weapon2
+    button: |
+      **Weapon2**:
+      ${ weapon2 }
+  - Edit: weapon2_location
+    button: |
+      **Weapon2 location**:
+      ${ weapon2_location }
+  - Edit: weapon3
+    button: |
+      **Weapon3**:
+      ${ weapon3 }
+  - Edit: weapon3_location
+    button: |
+      **Weapon3 location**:
+      ${ weapon3_location }
+  - Edit: weapon4
+    button: |
+      **Weapon4**:
+      ${ weapon4 }
+  - Edit: weapon4_location
+    button: |
+      **Weapon4 location**:
+      ${ weapon4_location }
+  - Edit: weapon5
+    button: |
+      **Weapon5**:
+      ${ weapon5 }
+  - Edit: weapon5_location
+    button: |
+      **Weapon5 location**:
+      ${ weapon5_location }
+  - Edit: weapon6_location
+    button: |
+      **Weapon6 location**:
+      ${ weapon6_location }
+  - Edit: weapon6
+    button: |
+      **Weapon6**:
+      ${ weapon6 }
+  - Edit: weapon7
+    button: |
+      **Weapon7**:
+      ${ weapon7 }
+  - Edit: weapon7_location
+    button: |
+      **Weapon7 location**:
+      ${ weapon7_location }
+  - Edit: weapon8
+    button: |
+      **Weapon8**:
+      ${ weapon8 }
+  - Edit: weapon8_location
+    button: |
+      **Weapon8 location**:
+      ${ weapon8_location }
+  - Edit: used_weapon
+    button: |
+      **Def. used weapon?**:
+      ${ word(yesno(used_weapon)) }
+  - Edit: used_weapon_how
+    button: |
+      **Used weapon how?**:
+      > ${ single_paragraph(used_weapon_how) }
+  - Edit: danger_more_abuse
+    button: |
+      **Danger more abuse to child1**:
+      ${ word(yesno(danger_more_abuse)) }
+  - Edit: danger_more_abuse_others
+    button: |
+      **Danger more abuse other kids**:
+      ${ word(yesno(danger_more_abuse_others)) }
+  - Edit: danger_more_abuse_why
+    button: |
+      **Danger more abuse why**:
+      > ${ single_paragraph(danger_more_abuse_why) }
+  - Edit: other_parties1_military
+    button: |
+      **Other parties1 in military?**:
+      ${ word(yesno(other_parties1_military)) }
+  - Edit: signature_date
+    button: |
+      **Date of signature**:
+      ${ signature_date }
+---
+continue button field: children.revisit
+question: |
+  Edit children
+subquestion: |
+  ${ children.table }
+
+  ${ children.add_action() }
+---
+table: children.table
+rows: children
+columns:
+  - Name: |
+      row_item.name.full() if defined("row_item.name.first") else ""
+  - Birthdate: |
+      row_item.birthdate if defined("row_item.birthdate") else ""
+edit:
+  - name.first
+  - birthdate
+confirm: True
+
+---
+continue button field: other_parties.revisit
+question: |
+  Edit other_parties
+subquestion: |
+  ${ other_parties.table }
+
+  ${ other_parties.add_action() }
+---
+table: other_parties.table
+rows: other_parties
+columns:
+  - Name: |
+      row_item.name.full() if defined("row_item.name.first") else ""
+  - Birthdate: |
+      row_item.birthdate if defined("row_item.birthdate") else ""
+  - Address: |
+      row_item.address.block() if defined("row_item.address.zip") else ""
+edit:
+  - name.first
+  - birthdate
+  - address.zip
+confirm: True
+
+---
+continue button field: users.revisit
+question: |
+  Edit users
+subquestion: |
+  ${ users.table }
+
+  ${ users.add_action() }
+---
+table: users.table
+rows: users
+columns:
+  - Name: |
+      row_item.name.full() if defined("row_item.name.first") else ""
+  - Birthdate: |
+      row_item.birthdate if defined("row_item.birthdate") else ""
+  - Signature: |
+      row_item.signature if defined("row_item.signature") else ""
+edit:
+  - name.first
+  - birthdate
+  - signature
+confirm: True
+
+---
+id: download rfaaffidavitonbehalfofminor
+event: rfaaffidavitonbehalfofminor_download
+question: |
+  All done
+subquestion: |
+  Thank you ${users}. Your form is ready to download and deliver.
+  
+  View, download and send your form below. Click the "Edit answers" button to fix any mistakes.
+
+  ${ action_button_html(url_action('review_rfaaffidavitonbehalfofminor'), label='Edit answers', color='info') }
+  
+  
+  ${ al_user_bundle.download_list_html() }
+  
+
+  ${ al_user_bundle.send_button_html(show_editable_checkbox=False) }
+
+progress: 100
+---
+# ALDocument objects specify the metadata for each template
+objects:
+  - rfaaffidavitonbehalfofminor_attachment: ALDocument.using(title="Rfaaffidavitonbehalfofminor", filename="rfaaffidavitonbehalfofminor", enabled=True, has_addendum=False, )
+---
+# Bundles group the ALDocuments into separate downloads, such as for court and for the user
+objects:
+  - al_user_bundle: ALDocumentBundle.using(elements=[rfaaffidavitonbehalfofminor_attachment], filename="rfaaffidavitonbehalfofminor", title="All forms to download for your records", enabled=True)
+  - al_court_bundle: ALDocumentBundle.using(elements=[rfaaffidavitonbehalfofminor_attachment],  filename="rfaaffidavitonbehalfofminor", title="All forms to deliver to court", enabled=True)
+---
+# Each attachment defines a key in an ALDocument. We use `i` as the placeholder here so the same template is 
+# used for "preview" and "final" keys, and logic in the template checks the value of 
+# `i` to show or hide the user's signature
+---
+attachment:
+  name: rfaaffidavitonbehalfofminor
+  filename: rfaaffidavitonbehalfofminor
+  variable name: rfaaffidavitonbehalfofminor_attachment[i]
+  skip undefined: True
+  pdf template file: rfaaffidavitonbehalfofminor.pdf
+  fields:
+      - "trial_court_county": ${ trial_court.address.county }
+      - "docket_number": ${ docket_number }
+      - "children1_name": ${ children[0] }
+      - "children1_birthdate": ${ children[0].birthdate.format() }
+      - "other_parties1_name": ${ other_parties[0] }
+      - "other_parties1_name__1": ${ other_parties[0] }
+      - "other_parties1_birthdate": ${ other_parties[0].birthdate.format() }
+      - "other_parties1_address_address": ${ other_parties[0].address.address }
+      - "other_parties1_address_city": ${ other_parties[0].address.city }
+      - "other_parties1_address_state": ${ other_parties[0].address.state }
+      - "other_parties1_address_zip": ${ other_parties[0].address.zip }
+      - "users1_name": ${ users[0] }
+      - "users1_birthdate": ${ users[0].birthdate.format() }
+      - "affidavit_signature_date": ${ affidavit_signature_date.format() }
+      - "users1_signature": ${ users[0].signature_if_final(i) }
+      - "users1_signature": ${ users[0].signature_if_final(i) }
+      - "printed_signature": ${ printed_signature }
+      - "printed_signature": ${ printed_signature }
+      - "other_parties1_weapon_yes": ${ other_parties1_weapon }
+      - "other_parties1_weapon_no": ${ not other_parties1_weapon }
+      - "other_parties1_weapon_DK": ${ other_parties1_weapon_DK }
+      - "recent_incident_date": ${ recent_incident_date.format() }
+      - "recent_incident_time": ${ recent_incident_time }
+      - "recent_incident_town": ${ recent_incident_town }
+      - "recent_incident_state": ${ recent_incident_state }
+      - "recent_incident_description": ${ recent_incident_description }
+      - "recent_incident_most_serious_yes": ${ recent_incident_most_serious }
+      - "recent_incident_most_serious_no": ${ not recent_incident_most_serious }
+      - "serious_incident_date": ${ serious_incident_date.format() }
+      - "serious_incident_time": ${ serious_incident_time }
+      - "serious_incident_town": ${ serious_incident_town }
+      - "serious_incident_state": ${ serious_incident_state }
+      - "serious_incident_description": ${ serious_incident_description }
+      - "other_incident_description": ${ other_incident_description }
+      - "weapon1": ${ weapon1 }
+      - "weapon1_location": ${ weapon1_location }
+      - "weapon2": ${ weapon2 }
+      - "weapon2_location": ${ weapon2_location }
+      - "weapon3": ${ weapon3 }
+      - "weapon3_location": ${ weapon3_location }
+      - "weapon4": ${ weapon4 }
+      - "weapon4_location": ${ weapon4_location }
+      - "weapon5": ${ weapon5 }
+      - "weapon5_location": ${ weapon5_location }
+      - "weapon6_location": ${ weapon6_location }
+      - "weapon6": ${ weapon6 }
+      - "weapon7": ${ weapon7 }
+      - "weapon7_location": ${ weapon7_location }
+      - "weapon8": ${ weapon8 }
+      - "weapon8_location": ${ weapon8_location }
+      - "extra_sheets_attached": ${ extra_sheets_attached }
+      - "used_weapon_yes": ${ used_weapon }
+      - "used_weapon_no": ${ not used_weapon }
+      - "used_weapon_how": ${ used_weapon_how }
+      - "danger_more_abuse_yes": ${ danger_more_abuse }
+      - "danger_more_abuse_no": ${ not danger_more_abuse }
+      - "danger_more_abuse_others_yes": ${ danger_more_abuse_others }
+      - "danger_more_abuse_others_no": ${ not danger_more_abuse_others }
+      - "danger_more_abuse_why": ${ danger_more_abuse_why }
+      - "other_parties1_military_yes": ${ other_parties1_military }
+      - "other_parties1_military_no": ${ not other_parties1_military }
+      - "signature_date": ${ signature_date }
+
+
+
