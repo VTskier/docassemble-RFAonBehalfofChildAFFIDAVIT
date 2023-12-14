@@ -1,3 +1,9 @@
+comment: |
+  Change pdf template filename to 6_RFA_affidavit_on_behalf_of_minor.pdf
+  Copy the overflow attachment docx template and give it this name RFAaffidavitOBOchild_addendum.docx
+  I copied attachment info from RFA interview affidavit, including the overflow info
+
+
 ---
 include:
   - docassemble.AssemblyLine:assembly_line.yml
@@ -577,48 +583,59 @@ objects:
 # `i` to show or hide the user's signature
 ---
 attachment:
-  name: rfaaffidavitonbehalfofminor
-  filename: rfaaffidavitonbehalfofminor
-  variable name: rfaaffidavitonbehalfofminor_attachment[i]
+  name: 6 RFA_affidavit_on_behalf_of_minor
+  filename: 6_RFA_affidavit_on_behalf_of_minor
+  variable name: RFAaffidavitonbehalfofminor_attachment[i]
   skip undefined: True
-  pdf template file: rfaaffidavitonbehalfofminor.pdf
+  pdf template file: 6_RFA_affidavit_on_behalf_of_minor.pdf
   fields:
       - "trial_court_county": ${ trial_court.address.county }
       - "docket_number": ${ docket_number }
       - "children1_name": ${ children[0] }
-      - "children1_birthdate": ${ children[0].birthdate.format() }
+      - "children1_birthdate": ${ format_date(children[0].birthdate, format='M/d/yyyy') }
       - "other_parties1_name": ${ other_parties[0] }
       - "other_parties1_name__1": ${ other_parties[0] }
-      - "other_parties1_birthdate": ${ other_parties[0].birthdate.format() }
+      - "other_parties1_birthdate": >-
+          ${ "/".join([str(f) for f in [other_parties[0].birth_month, other_parties[0].birth_day, other_parties[0].birth_year] if f]) }
       - "other_parties1_address_address": ${ other_parties[0].address.address }
       - "other_parties1_address_city": ${ other_parties[0].address.city }
       - "other_parties1_address_state": ${ other_parties[0].address.state }
       - "other_parties1_address_zip": ${ other_parties[0].address.zip }
       - "users1_name": ${ users[0] }
-      - "users1_birthdate": ${ users[0].birthdate.format() }
-      - "affidavit_signature_date": ${ affidavit_signature_date.format() }
+      - "users1_birthdate": ${ format_date(users[0].birthdate, format='M/d/yyyy') }
+      - "affidavit_signature_date": ${ format_date(signature_date, format='M/d/yyyy') }
       - "users1_signature": ${ users[0].signature_if_final(i) }
       - "users1_signature": ${ users[0].signature_if_final(i) }
       - "printed_signature": ${ printed_signature }
       - "printed_signature": ${ printed_signature }
-      - "other_parties1_weapon_yes": ${ other_parties1_weapon }
-      - "other_parties1_weapon_no": ${ not other_parties1_weapon }
-      - "other_parties1_weapon_DK": ${ other_parties1_weapon_DK }
-      - "recent_incident_date": ${ recent_incident_date.format() }
+      - "other_parties1_weapon_yes": ${ weapons.there_are_any == True}
+      - "other_parties1_weapon_no": ${ weapons.there_are_any == False }
+      - "other_parties1_weapon_DK": ${ weapons.there_are_any == None }
+      - "recent_incident_date": ${ recent_incident_date }
       - "recent_incident_time": ${ recent_incident_time }
       - "recent_incident_town": ${ recent_incident_town }
-      - "recent_incident_state": ${ recent_incident_state }
-      - "recent_incident_description": ${ recent_incident_description }
+      - "recent_incident_state": |
+          % if recent_incident_state: 
+          ${ recent_incident_state }
+          % elif other_recent_incident_state:
+          ${ other_recent_incident_state }
+          % endif 
+      - "recent_incident_description": ${ RFAaffidavit.safe_value("recent_incident_description") }
       - "recent_incident_most_serious_yes": ${ recent_incident_most_serious }
       - "recent_incident_most_serious_no": ${ not recent_incident_most_serious }
-      - "serious_incident_date": ${ serious_incident_date.format() }
+      - "serious_incident_date": ${ serious_incident_date }
       - "serious_incident_time": ${ serious_incident_time }
       - "serious_incident_town": ${ serious_incident_town }
-      - "serious_incident_state": ${ serious_incident_state }
-      - "serious_incident_description": ${ serious_incident_description }
-      - "other_incident_description": ${ other_incident_description }
-      - "weapon1": ${ weapon1 }
-      - "weapon1_location": ${ weapon1_location }
+      - "serious_incident_state": |
+          % if serious_incident_state: 
+          ${ serious_incident_state }
+          % elif other_serious_incident_state:
+          ${ other_serious_incident_state }
+          % endif
+      - "serious_incident_description": ${ RFAaffidavit.safe_value("serious_incident_description") }
+      - "other_incident_description": ${ RFAaffidavit.safe_value("other_incident_description") }
+      - "weapon1": ${ weapons[0].description }
+      - "weapon1_location": ${ weapons[0].weapon_location }
       - "weapon2": ${ weapon2 }
       - "weapon2_location": ${ weapon2_location }
       - "weapon3": ${ weapon3 }
@@ -633,10 +650,19 @@ attachment:
       - "weapon7_location": ${ weapon7_location }
       - "weapon8": ${ weapon8 }
       - "weapon8_location": ${ weapon8_location }
-      - "extra_sheets_attached": ${ extra_sheets_attached }
+      - "extra_sheets_attached": |
+          % if weapons.number() > 8: 
+            1
+          % else:
+            0
+          % endif
+      - "weapons_overflow": |
+          % if weapons.number() > 8: 
+            ${ RFAaffidavit.has_overflow() }
+          % endif
       - "used_weapon_yes": ${ used_weapon }
       - "used_weapon_no": ${ not used_weapon }
-      - "used_weapon_how": ${ used_weapon_how }
+      - "used_weapon_how": ${ RFAaffidavit.safe_value("used_weapon_how") }
       - "danger_more_abuse_yes": ${ danger_more_abuse }
       - "danger_more_abuse_no": ${ not danger_more_abuse }
       - "danger_more_abuse_others_yes": ${ danger_more_abuse_others }
@@ -644,7 +670,26 @@ attachment:
       - "danger_more_abuse_why": ${ danger_more_abuse_why }
       - "other_parties1_military_yes": ${ other_parties1_military }
       - "other_parties1_military_no": ${ not other_parties1_military }
-      - "signature_date": ${ signature_date }
+      - "signature_date": ${ format_date(signature_date, format='M/d/yyyy') }
+---
 
+attachment:
+  variable name: RFAaffidavitOBOchild.addendum
+  docx template file: RFAaffidavitOBOchild_addendum.docx
 
+---
+
+code: |
+  RFAaffidavitOBOchild.overflow_fields["weapons"].label = "Additional weapons"
+  RFAaffidavitOBOchild.overflow_fields["weapons"].overflow_trigger = 8
+  RFAaffidavitOBOchild.overflow_fields["recent_incident_description"].overflow_trigger = 1143
+  RFAaffidavitOBOchild.overflow_fields["recent_incident_description"].label = "Please describe the most recent incident with as much detail as possible."
+  RFAaffidavitOBOchild.overflow_fields["serious_incident_description"].overflow_trigger = 752
+  RFAaffidavitOBOchild.overflow_fields["serious_incident_description"].label = "Please describe the most serious incident with as much detail as possible."
+  RFAaffidavitOBOchild.overflow_fields["other_incident_description"].overflow_trigger = 1838
+  RFAaffidavitOBOchild.overflow_fields["other_incident_description"].label = "Please describe any other incident(s) with as much detail as possible."
+  RFAaffidavitOBOchild.overflow_fields["used_weapon_how"].overflow_trigger = 590
+  RFAaffidavitOBOchild.overflow_fields["used_weapon_how"].label = "Describe in detail how they used or threatened to use weapon?"
+  RFAaffidavitOBOchild.overflow_fields.gathered = True
+---
 
